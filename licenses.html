@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Licenses - blackchip.org</title>
+<link rel="icon" type="image/png" href="images/favicon.png">
+<link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+<link rel="shortcut icon" href="images/favicon.ico">
+<style>
+  @font-face {
+    font-family: "New Rocker";
+    src: url("fonts/NewRocker-Regular.ttf") format("truetype");
+  }
+
+  @font-face {
+    font-family: "Alfa Slab One";
+    src: url("fonts/AlfaSlabOne-Regular.ttf") format("truetype");
+  }
+
+  @font-face {
+    font-family: "IBM Plex Sans";
+    src: url("fonts/IBMPlexSans-Variable.ttf") format("truetype-variations");
+    font-weight: 100 700;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: black;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: "IBM Plex Sans", sans-serif;
+    padding: 2rem 1rem;
+  }
+
+  header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  header img {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 1rem;
+  }
+
+  header h1 {
+    margin: 0 0 2rem;
+    font-family: "Alfa Slab One", sans-serif;
+    font-size: 2.5rem;
+    font-weight: normal;
+  }
+
+  hr {
+    width: 200px;
+    max-width: 100%;
+    border: none;
+    border-top: 1px solid #555;
+    margin: 2rem 0;
+  }
+
+  main {
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .license-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 260px;
+    flex-shrink: 0;
+    border: 1px solid #555;
+    border-radius: 4px;
+    overflow-y: auto;
+    max-height: 50vh;
+  }
+
+  .license-list li {
+    border-bottom: 1px solid #333;
+  }
+
+  .license-list li:last-child {
+    border-bottom: none;
+  }
+
+  .license-list button {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: none;
+    border: none;
+    color: white;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 1rem;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .license-list button:hover {
+    background: #222;
+  }
+
+  .license-list button[aria-selected="true"] {
+    background: #333;
+    font-weight: 700;
+  }
+
+  .license-text {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    padding: 1rem;
+    border: 1px solid #555;
+    border-radius: 4px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    overflow-y: auto;
+    max-height: 50vh;
+  }
+
+  .back-link {
+    margin-top: 2rem;
+    color: white;
+    text-decoration: none;
+    font-size: 1.25rem;
+  }
+
+  @media (max-width: 700px) {
+    main {
+      flex-direction: column;
+    }
+
+    .license-list {
+      width: 100%;
+    }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <img src="images/chip100.svg" alt="Blackchip icon">
+    <h1>Licenses</h1>
+  </header>
+  <main>
+    <ul class="license-list" id="license-list"></ul>
+    <pre class="license-text" id="license-text">Loading&hellip;</pre>
+  </main>
+  <a class="back-link" href="index.html">Back</a>
+
+  <script>
+    const DEFAULT_NAME = "blackchip.org";
+    const listEl = document.getElementById("license-list");
+    const textEl = document.getElementById("license-text");
+
+    function sortedLicenses(entries) {
+      return [...entries].sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    async function showLicense(entry, button) {
+      for (const b of listEl.querySelectorAll("button")) {
+        b.setAttribute("aria-selected", b === button ? "true" : "false");
+      }
+      textEl.textContent = "Loading…";
+      try {
+        const res = await fetch(entry.text);
+        textEl.textContent = await res.text();
+      } catch (err) {
+        textEl.textContent = "Failed to load license text.";
+      }
+    }
+
+    async function init() {
+      const res = await fetch("licenses.json");
+      const entries = sortedLicenses(await res.json());
+
+      let defaultButton = null;
+      for (const entry of entries) {
+        const li = document.createElement("li");
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = entry.name;
+        button.setAttribute("aria-selected", "false");
+        button.addEventListener("click", () => showLicense(entry, button));
+        li.appendChild(button);
+        listEl.appendChild(li);
+
+        if (entry.name === DEFAULT_NAME) {
+          defaultButton = button;
+        }
+      }
+
+      defaultButton ??= listEl.querySelector("button");
+      if (defaultButton) {
+        const defaultEntry = entries.find((e) => e.name === defaultButton.textContent);
+        showLicense(defaultEntry, defaultButton);
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

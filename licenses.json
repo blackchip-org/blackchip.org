@@ -1,0 +1,22 @@
+[
+  {
+    "name": "blackchip.org",
+    "license": "MIT",
+    "text": "LICENSE"
+  },
+  {
+    "name": "New Rocker Font",
+    "license": "OFL-1.1",
+    "text": "fonts/NewRocker.OFL.txt"
+  },
+  {
+    "name": "Alfa Slab One Font",
+    "license": "OFL-1.1",
+    "text": "fonts/OFL-AlfaSlabOne.txt"
+  },
+  {
+    "name": "IBM Plex Sans Font",
+    "license": "OFL-1.1",
+    "text": "fonts/OFL-IBMPlexSans.txt"
+  }
+]

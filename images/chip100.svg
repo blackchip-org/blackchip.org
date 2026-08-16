@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <radialGradient id="chipBody" cx="35%" cy="30%" r="75%">
+      <stop offset="0%" stop-color="#3a3a3a"/>
+      <stop offset="55%" stop-color="#1c1c1c"/>
+      <stop offset="100%" stop-color="#0a0a0a"/>
+    </radialGradient>
+    <linearGradient id="edgeShine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4a4a4a"/>
+      <stop offset="50%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#4a4a4a"/>
+    </linearGradient>
+    <radialGradient id="innerRing" cx="50%" cy="50%" r="50%">
+      <stop offset="80%" stop-color="#111111"/>
+      <stop offset="100%" stop-color="#2b2b2b"/>
+    </radialGradient>
+  </defs>
+
+  <!-- outer edge -->
+  <circle cx="100" cy="100" r="96" fill="url(#edgeShine)"/>
+  <!-- chip face -->
+  <circle cx="100" cy="100" r="90" fill="url(#chipBody)" stroke="#000" stroke-width="2"/>
+
+  <!-- edge spots (standard 8-spot casino chip pattern) -->
+  <g fill="#f5f5f5">
+    <g id="spotGroup">
+      <rect x="93" y="6" width="14" height="26" rx="2"/>
+    </g>
+    <use href="#spotGroup" transform="rotate(45 100 100)"/>
+    <use href="#spotGroup" transform="rotate(90 100 100)"/>
+    <use href="#spotGroup" transform="rotate(135 100 100)"/>
+    <use href="#spotGroup" transform="rotate(180 100 100)"/>
+    <use href="#spotGroup" transform="rotate(225 100 100)"/>
+    <use href="#spotGroup" transform="rotate(270 100 100)"/>
+    <use href="#spotGroup" transform="rotate(315 100 100)"/>
+  </g>
+
+  <!-- inner disc -->
+  <circle cx="100" cy="100" r="62" fill="url(#innerRing)" stroke="#d4af37" stroke-width="2.5"/>
+  <circle cx="100" cy="100" r="55" fill="none" stroke="#d4af37" stroke-width="1" opacity="0.6"/>
+
+  <!-- text -->
+  <text x="100" y="114" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="bold" font-size="42" fill="#f5f5f5">100</text>
+
+  <!-- subtle top highlight -->
+  <ellipse cx="72" cy="55" rx="46" ry="20" fill="#ffffff" opacity="0.05"/>
+</svg>
