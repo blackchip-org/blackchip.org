@@ -16,6 +16,6 @@ Below that are the following links separated by dots arranged on the same
 line, using the IBM Plex Sans font:
 
 - Licenses (links to licenses.html)
-- Contact: games@blackchip.org (a mailto link for that address)
+- games@blackchip.org (a mailto link for that address)
 
 Regular body text on the page uses the IBM Plex Sans font.

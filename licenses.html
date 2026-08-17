@@ -24,13 +24,18 @@
     font-weight: 100 700;
   }
 
+  @font-face {
+    font-family: "Inconsolata";
+    src: url("fonts/Inconsolata-Regular.ttf") format("truetype");
+  }
+
   * {
     box-sizing: border-box;
   }
 
   body {
     margin: 0;
-    min-height: 100vh;
+    height: 100vh;
     background: black;
     color: white;
     display: flex;
@@ -86,7 +91,6 @@
     border: 1px solid #555;
     border-radius: 4px;
     overflow-y: auto;
-    max-height: 50vh;
   }
 
   .license-list li {
@@ -128,18 +132,31 @@
     border-radius: 4px;
     white-space: pre-wrap;
     word-wrap: break-word;
-    font-family: "IBM Plex Sans", sans-serif;
+    font-family: "Inconsolata", monospace;
     font-size: 0.95rem;
     line-height: 1.5;
     overflow-y: auto;
-    max-height: 50vh;
   }
 
   .back-link {
+    display: inline-flex;
+    align-items: center;
     margin-top: 2rem;
-    color: white;
+    color: black;
     text-decoration: none;
     font-size: 1.25rem;
+    background: #d4af37;
+    border: 2px solid #1c1c1c;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    box-shadow: 0 3px 8px rgba(212, 175, 55, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+
+  .back-link:hover {
+    background: #e8c250;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(212, 175, 55, 0.5);
   }
 
   @media (max-width: 700px) {
@@ -173,6 +190,44 @@
       return [...entries].sort((a, b) => a.name.localeCompare(b.name));
     }
 
+    // License text files are hard-wrapped to a fixed column width. Reflow
+    // them into flowing paragraphs so they wrap naturally to the pane
+    // instead of showing the original mid-sentence line breaks. Blank
+    // lines mark paragraph breaks; short all-caps lines (section
+    // headings like "PREAMBLE") are kept on their own line.
+    function reflowLicenseText(text) {
+      const HEADING = /^[A-Z][A-Z0-9 &'-]*$/;
+      const RULE = /^-{3,}$/;
+      const lines = text.replace(/\r\n/g, "\n").split("\n");
+      const paragraphs = [];
+      let current = [];
+
+      const flush = () => {
+        if (current.length) {
+          paragraphs.push(current.join(" "));
+          current = [];
+        }
+      };
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (trimmed === "") {
+          flush();
+        } else if (RULE.test(trimmed)) {
+          flush();
+          paragraphs.push(trimmed);
+        } else if (trimmed.length < 60 && HEADING.test(trimmed)) {
+          flush();
+          paragraphs.push(trimmed);
+        } else {
+          current.push(trimmed);
+        }
+      }
+      flush();
+
+      return paragraphs.join("\n\n");
+    }
+
     async function showLicense(entry, button) {
       for (const b of listEl.querySelectorAll("button")) {
         b.setAttribute("aria-selected", b === button ? "true" : "false");
@@ -180,7 +235,7 @@
       textEl.textContent = "Loading…";
       try {
         const res = await fetch(entry.text);
-        textEl.textContent = await res.text();
+        textEl.textContent = reflowLicenseText(await res.text());
       } catch (err) {
         textEl.textContent = "Failed to load license text.";
       }
